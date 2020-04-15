@@ -64,7 +64,7 @@ with open (args.f, "r") as tsvfile:
         df_median.to_csv(s_out_median, sep="\t")
         #plot the heatmap for the raw cell count
         heatmap_file=os.path.join(dir_layout_heatmap, s_plateID.group(1) + "_heatmap.pdf")
-        os.system('python3 /Users/patterja/Workspace/hongmei/scripts/heatmap_for_384_matrix.py --i %s --l %s --h %s' % (s_file_path, args.l, heatmap_file))
+        os.system('python3 /Users/patterja/Workspace/hongmei/drug_response/heatmap_for_384_matrix.py --i %s --l %s --h %s' % (s_file_path, args.l, heatmap_file))
         #remove the outlier of triplates and calculate the coefficient of variance
         (d_mean, d_cv,i_remove_num, plateID)=CellCountMeanFilter(s_file_path, args.l)
         #write down the coefficient of variance
@@ -128,24 +128,24 @@ s_GRmetrics=os.path.join(dir_GR, "GRmetrics.txt")
 #os.system("/usr/bin/python /Users/patterja/Workspace/gr50_tools/SRC/python/scripts/add_gr_column.py %s > %s" % (s_gr50_input, s_GRvalue))
 #os.system("/usr/bin/python /Users/patterja/Workspace/gr50_tools/SRC/python/scripts/compute_gr_metrics.py %s > %s" % (s_GRvalue, s_GRmetrics))
 #os.system("python3 /Users/patterja/Workspace/hongmei/scripts/plot_figure.py --v %s --m %s --d %s --d2 %s" % (s_GRvalue, s_GRmetrics, dir_drug_plot, dir_cell_line_plot))
-    os.system("python3 /Users/patterja/Workspace/hongmei/scripts/plot_figure.py --v %s --m %s --d %s" % (s_GRvalue, s_GRmetrics, dir_drug_plot))
+#os.system("python3 /Users/patterja/Workspace/hongmei/scripts/plot_figure.py --v %s --m %s --d %s" % (s_GRvalue, s_GRmetrics, dir_drug_plot))
 
 ############add max does of each drug into the GRmetrics.txt############
-df_GRm_edit=add_max_conc_to_GRm(f_GRm=s_GRmetrics, f_layout=args.l)
-df_GRm_edit.to_csv(s_GRmetrics, sep="\t")
+#df_GRm_edit=add_max_conc_to_GRm(f_GRm=s_GRmetrics, f_layout=args.l)
+#df_GRm_edit.to_csv(s_GRmetrics, sep="\t")
 
 ###########GR matrics statistics plot####################
-os.system('python3 /Users/patterja/Workspace/hongmei/scripts/boxplot_for_GRmetrics.py --i %s --w %s' % (s_GRmetrics, dir_stat_plot))
-os.system('python3 /Users/patterja/Workspace/hongmei/scripts/gr50_and_curve_count_barplot.py --i %s --p %s --w %s' % (s_GRmetrics, "0.05", dir_stat_plot))
+os.system('python3 /Users/patterja/Workspace/hongmei/drug_response/boxplot_for_GRmetrics.py --i %s --w %s' % (s_GRmetrics, dir_stat_plot))
+os.system('python3 /Users/patterja/Workspace/hongmei/drug_response/gr50_and_curve_count_barplot.py --i %s --p %s --w %s' % (s_GRmetrics, "0.05", dir_stat_plot))
 
 ###########GR50 and drug serum concentration plot#############
-os.system('python3 /Users/patterja/Workspace/hongmei/scripts/barplot_for_GR50_and_serum_conc.py --i %s --c %s --s %s --w %s' % (s_GRmetrics, args.c, args.sc, dir_serum_plot))
+os.system('python3 /Users/patterja/Workspace/hongmei/drug_response/barplot_for_GR50_and_serum_conc.py --i %s --c %s --s %s --w %s' % (s_GRmetrics, args.c, args.sc, dir_serum_plot))
 ###########GRmax plot#############
 #calculate the GR values of drugs at serum concentration, and add the values into GRmetrics
 s_GRmetrics_new=os.path.join(dir_GR, "GRmetrics_GRserum_added.txt")
-os.system('python3 /Users/patterja/Workspace/hongmei/scripts/calculate_GR_at_serum_conc.py --m %s --gr %s --s %s --o %s' % (s_GRmetrics, s_GRvalue, args.sc, s_GRmetrics_new))
-os.system('python3 /Users/patterja/Workspace/hongmei/scripts/barplot_for_GRmax_and_GRserum.py --i %s --c %s  --w %s' % (s_GRmetrics_new, args.c, dir_GRmax_plot))
+os.system('python3 /Users/patterja/Workspace/hongmei/drug_response/calculate_GR_at_serum_conc.py --m %s --gr %s --s %s --o %s' % (s_GRmetrics, s_GRvalue, args.sc, s_GRmetrics_new))
+os.system('python3 /Users/patterja/Workspace/hongmei/drug_response/barplot_for_GRmax_and_GRserum.py --i %s --c %s  --w %s' % (s_GRmetrics_new, args.c, dir_GRmax_plot))
 
 ###########GR50 heatmap plot############
-os.system('python3 /Users/zhanho/Project/SMMART/scripts/heatmap_for_GR50_median_center.py --i %s --c %s --w %s' % (s_GRmetrics, args.c, dir_stat_plot))
+os.system('python3 /Users/patterja/Workspace/hongmei/drug_response/heatmap_for_GR50_median_center.py --i %s --c %s --w %s' % (s_GRmetrics, args.c, dir_stat_plot))
 
