@@ -22,7 +22,8 @@ def supply_args():
     parser = argparse.ArgumentParser(description='plotting curves')
     parser.add_argument('--metrics', type=str, help='GR_metrics.txt')
     parser.add_argument('--values', type=str,help='GR_values.txt')
-    parser.add_argument('--outdir', help='input the work directory for curves figure')
+    parser.add_argument('--outdir_bydrug', help='input the work directory for curves figure')
+    parser.add_argument('--outdir_bycellline', help='input the work directory for curves figure')
     parser.add_argument('--version', action='version', version='%(prog)s ' + VERSION)
     args = parser.parse_args()
     return args
@@ -123,7 +124,7 @@ def main():
         grm_subset = gr_metrics[gr_metrics['agent']==drug]
         grv_subset = gr_values[gr_values['agent']==drug]
         pltobj = plot_curves(grm_subset, grv_subset, colorvar="cell_line", colvar="agent",rowvar=None)
-        pltobj.savefig(os.path.join(args.outdir, drug +"_GRplot.pdf"), bbox_inches='tight')
+        pltobj.savefig(os.path.join(args.outdir_bydrug, drug +"_GRplot.pdf"), bbox_inches='tight')
         #pltobj = plot_curves(grm_subset, grv_subset, colorvar=None, colvar="agent",rowvar="cell_line")
         plt.close()
         #write by cell line
@@ -132,7 +133,7 @@ def main():
         grv_subset = gr_values[gr_values['cell_line']==cellline]
         #pltobj = plot_curves(grm_subset, grv_subset, colorvar=None, colvar="agent",rowvar="cell_line")
         pltobj = plot_curves(grm_subset, grv_subset, colorvar="agent", colvar="cell_line",rowvar=None)
-        pltobj.savefig(os.path.join(args.outdir, cellline +"_GRplot.pdf"), bbox_inches='tight')
+        pltobj.savefig(os.path.join(args.outdir_bycellline, cellline +"_GRplot.pdf"), bbox_inches='tight')
         plt.close()
 
 
