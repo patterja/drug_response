@@ -13,8 +13,8 @@ import numpy as np
 
 def curve_and_gr50_stat(df_data, pvalue):
     #plot by cell line
-    df_fit_cell_line=df_data[['cell_line', 'pval']]
-    df_fit_cell_line =df_fit_cell_line[df_fit_cell_line['pval']<=pvalue]
+    df_fit_cell_line=df_data[['cell_line', 'pval_GR']]
+    df_fit_cell_line =df_fit_cell_line[df_fit_cell_line['pval_GR']<=pvalue]
     df_fit_count_cell_line=df_fit_cell_line.groupby("cell_line").count()
     df_fit_count_cell_line.columns=["Sigmoidal Fit"]
     df_gr50_cell_line=df_data[['cell_line', 'GR50']]
@@ -30,8 +30,8 @@ def curve_and_gr50_stat(df_data, pvalue):
     cell_line_ax.set_xlabel("Cell Lines")
     cell_line_ax.set_ylabel("Number of Compounds")
     #plot by drug
-    df_fit_agent=df_data[['agent', 'pval']]
-    df_fit_agent =df_fit_agent[df_fit_agent['pval']<=pvalue]
+    df_fit_agent=df_data[['agent', 'pval_GR']]
+    df_fit_agent =df_fit_agent[df_fit_agent['pval_GR']<=pvalue]
     df_fit_agent_count=df_fit_agent.groupby("agent").count()
     df_fit_agent_count.columns=["Sigmoidal Fit"]
     df_gr50_agent=df_data[['agent', 'GR50']]
