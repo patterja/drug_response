@@ -14,20 +14,23 @@ import csv
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('--i', help='input the GRmetrics.txt')
+    parser.add_argument('--metrics', help='input the GRmetrics.txt')
     parser.add_argument('--c', help='input the cell line class file: JWGray_BCCL_classifications_v5-1.txt')
     parser.add_argument('--w', help='input the work directory')
+    parser.add_argument('--heatmap_script', help='full path to heatmap script')
+
+
     
     args = parser.parse_args()
 
     #read in the data
-    df_data=pd.read_csv(args.i, sep="\t")
+    df_data=pd.read_csv(args.metrics, sep="\t")
     ###generate GR50 matrix for heatmap
-    df_gr50=df_data[["agent",'cell_line', "GR50", 'Maximal Does']]
+    df_gr50=df_data[["agent",'cell_line', "GR50", 'Maximal Does']].copy()
     #replace inf to maximal does
     for i in range(len(df_gr50)):
-        if(abs(df_gr50.ix[i,'GR50']) == np.inf):
-            df_gr50.ix[i,'GR50']=df_gr50.ix[i,'Maximal Does'] 
+        if(abs(df_gr50.loc[i,'GR50']) == np.inf):
+            df_gr50.loc[i,'GR50']=df_gr50.loc[i,'Maximal Does']
     #convert the value into log10
     df_gr50['GR50']=np.log10(df_gr50['GR50'])
     df_tmp=df_gr50[['agent', 'GR50']]
@@ -53,7 +56,7 @@ if __name__=='__main__':
     
     ###read in the data of cell line class
     df_class=pd.read_csv(args.c, sep='\t', index_col=0)
-    df_cell_line_class=pd.DataFrame(df_class.ix[ds_cell_line, 'Class'])
+    df_cell_line_class=df_class.loc[ds_cell_line, 'Class'].copy()
     df_cell_line_class=df_cell_line_class.transpose()
     cc_class_file=os.path.join(args.w, 'cell_line_class.txt')
     df_cell_line_class.to_csv(cc_class_file, sep='\t', index=None, header=False)
@@ -68,4 +71,4 @@ if __name__=='__main__':
     
     #plot the heatmap for GR50 matrix
     heatmap_file=os.path.join(args.w, "GR50_median_center_heatmap.pdf")
-    os.system('Rscript /Users/zhanho/Project/SMMART/scripts/heatmap3_new.R --data %s --t %s --r_side_label %s --c_side_label %s --w %d --h %d --min %f --max %f --out %s' % (gr50_file, "'Log10(GR50) nM'", drug_class_file, cc_class_file, 20, 10, -2 , 2, heatmap_file))
+    os.system('Rscript %s --data %s --t %s --r_side_label %s --c_side_label %s --w %d --h %d --min %f --max %f --out %s' % (args.heatmap_script, gr50_file, "'Log10(GR50) nM'", drug_class_file, cc_class_file, 20, 10, -2 , 2, heatmap_file))
