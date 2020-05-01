@@ -3,6 +3,9 @@
 #email:zhanho@ohsu.edu
 #data:Tue Apr 11 10:55:37 2017
 
+#edit by: Janice Patterson
+#edit on: 4/30/2020
+
 #description
 
 #import libraries
@@ -25,10 +28,28 @@ args = parser.parse_args()
 #read in the GRmetrics.txt
 df_data=pd.read_csv(args.i, sep="\t")
 df_data=df_data.set_index('cell_line')
+df_data.dropna(subset = ["GRserum"], inplace=True)
+
 #read in cell line class and color
-df_color=pd.read_csv(args.c, sep="\t", index_col=0)
+if args.c != None:
+    df_color=pd.read_csv(args.c, sep="\t", index_col=0)
+    df_merge = pd.merge(df_data, df_color, left_index=True, right_index=True)
+
+else:
+    col=["blue", "orange", "green", "red", "purple", "yellow", "brown", "gray", "pink"]
+
+    #df_color = pd.DataFrame({'Class': df_data['Class'], 'color': [None]* len(df_data['Class'])})
+
+    class_cond = []
+    for subtype in df_data['Class'].unique():
+        class_cond.append(df_data['Class'] == subtype)
+    df_merge = df_data
+    df_merge['Color'] = np.select(class_cond, col[0:len(df_data['Class'].unique())])
+
+
+
+
 #combine these to matrix
-df_merge=pd.merge(df_data, df_color, left_index=True, right_index=True)
 #extract the sub-matrix
 df_GRmax=df_merge[['agent', 'GRmax', 'GRserum', 'Class','Color']]
 df_GRmax.index.name='cell_line'
@@ -63,7 +84,7 @@ for s_agent in lst_agents:
     for s_class in df_class_color.index:
         #if all the cell lines in this class didn't reach the GRmax, don't plot the class legend
         ds_GRmax=df_agent[df_agent['Class']==s_class]['GRmax']
-        if (len(ds_GRmax.iloc[ds_GRmax.nonzero()[0]]) >0):
+        if (len(ds_GRmax.iloc[ds_GRmax.to_numpy().nonzero()[0]]) >0):
             patch=mpatches.Patch(color=df_class_color.ix[s_class, 'Color'], label=s_class)
             lst_handles.append(patch)
     #if no legend, don't plot
